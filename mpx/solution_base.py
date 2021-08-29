@@ -230,7 +230,7 @@ class SolutionBase:
             raise ValueError(
                 "Must provide exactly one of 'binary_graph_path' or 'graph_config'.")
         # MediaPipe package root path
-        root_path = os.sep.join(os.path.abspath(__file__).split(os.sep)[:-3])
+        root_path = os.sep.join(os.path.abspath(__file__).split(os.sep)[:-2])
         resource_util.set_resource_dir(root_path)
         validated_graph = validated_graph_config.ValidatedGraphConfig()
         if binary_graph_path:
@@ -390,6 +390,7 @@ class SolutionBase:
 
         [print(tag_index_name) for tag_index_name in canonical_graph_config_proto.input_stream]
 
+        # todo: fix this problem with the not registered names! maybe a bug?
         # self._input_stream_type_info = {
         #      get_name(tag_index_name): get_stream_packet_type(tag_index_name)
         #      for tag_index_name in canonical_graph_config_proto.input_stream

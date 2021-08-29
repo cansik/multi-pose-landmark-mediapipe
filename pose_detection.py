@@ -35,7 +35,7 @@ from mediapipe.python.solutions.pose_connections import POSE_CONNECTIONS
 # pylint: enable=unused-import
 from mpx.solution_base import SolutionBase
 
-BINARYPB_FILE_PATH = 'pose_detection/pose_detection_cpu.binarypb'
+BINARYPB_FILE_PATH = 'mediapipe/modules/pose_detection/pose_detection_cpu.binarypb'
 
 
 class PoseDetection(SolutionBase):

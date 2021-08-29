@@ -51,12 +51,18 @@ def main():
         # pass by reference.
         image.flags.writeable = False
         results = pose.process(image)
+        detections = detection.process(image)
 
         # Draw the pose annotation on the image.
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         mp_drawing.draw_landmarks(image, results.pose_landmarks, connections)
+
+        if detections.detections:
+            for det in detections.detections:
+                mp_drawing.draw_detection(image, det)
+
         cv2.imshow('MediaPipe Multi Pose', image)
         if cv2.waitKey(5) & 0xFF == 27:
             break
