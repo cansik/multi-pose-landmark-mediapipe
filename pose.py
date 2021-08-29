@@ -4,6 +4,8 @@ import cv2
 import mediapipe as mp
 from mediapipe.framework.formats import landmark_pb2
 
+import multi_pose
+from pose_detection import PoseDetection
 from utils import add_default_args, get_video_input
 
 
@@ -19,14 +21,19 @@ def main():
 
     # setup camera loop
     mp_drawing = mp.solutions.drawing_utils
-    mp_pose = mp.solutions.pose
+    mp_pose = multi_pose
 
-    pose = mp_pose.Pose(
+    pose = mp_pose.MultiPose(
         smooth_landmarks=args.no_smooth_landmarks,
         static_image_mode=args.static_image_mode,
         model_complexity=args.model_complexity,
         min_detection_confidence=args.min_detection_confidence,
         min_tracking_confidence=args.min_tracking_confidence)
+
+    detection = PoseDetection(
+        static_image_mode=args.static_image_mode,
+        min_detection_confidence=args.min_detection_confidence)
+
     cap = cv2.VideoCapture(get_video_input(args.input))
 
     # fix bug which occurs because draw landmarks is not adapted to upper pose
