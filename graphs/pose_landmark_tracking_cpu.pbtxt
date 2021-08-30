@@ -1,9 +1,9 @@
 # MediaPipe graph to detect/predict pose landmarks on CPU.
 #
 # The procedure is done in two steps:
-# - locate palms/poses
-# - detect landmarks for each palm/pose.
-# This graph tries to skip palm detection as much as possible by reusing
+# - locate bodies/poses
+# - detect landmarks for each body/pose.
+# This graph tries to skip body detection as much as possible by reusing
 # previously detected/predicted landmarks for new images.
 
 type: "HandLandmarkTrackingCpu"
@@ -23,14 +23,14 @@ input_side_packet: "NUM_POSES:num_poses"
 output_stream: "LANDMARKS:multi_pose_landmarks"
 
 # Extra outputs (for debugging, for instance).
-# Detected palms. (std::vector<Detection>)
-output_stream: "PALM_DETECTIONS:palm_detections"
+# Detected bodies. (std::vector<Detection>)
+output_stream: "BODY_DETECTIONS:body_detections"
 # Regions of interest calculated based on landmarks.
 # (std::vector<NormalizedRect>)
 output_stream: "POSE_ROIS_FROM_LANDMARKS:pose_rects"
-# Regions of interest calculated based on palm detections.
+# Regions of interest calculated based on body detections.
 # (std::vector<NormalizedRect>)
-output_stream: "POSE_ROIS_FROM_PALM_DETECTIONS:pose_rects_from_palm_detections"
+output_stream: "POSE_ROIS_FROM_BODY_DETECTIONS:pose_rects_from_body_detections"
 
 # Defines whether landmarks on the previous image should be used to help
 # localize landmarks on the current image.
@@ -62,12 +62,12 @@ node {
 
 # Drops the incoming image if enough poses have already been identified from the
 # previous image. Otherwise, passes the incoming image through to trigger a new
-# round of palm detection.
+# round of body detection.
 node {
   calculator: "GateCalculator"
   input_stream: "image"
   input_stream: "DISALLOW:prev_has_enough_poses"
-  output_stream: "palm_detection_image"
+  output_stream: "body_detection_image"
   options: {
     [mediapipe.GateCalculatorOptions.ext] {
       empty_packets_as_allow: true
@@ -75,48 +75,48 @@ node {
   }
 }
 
-# Detects palms.
+# Detects bodies.
 node {
   calculator: "PoseDetectionCpu"
-  input_stream: "IMAGE:palm_detection_image"
-  output_stream: "DETECTIONS:all_palm_detections"
+  input_stream: "IMAGE:body_detection_image"
+  output_stream: "DETECTIONS:all_body_detections"
 }
 
 # Makes sure there are no more detections than the provided num_poses.
 node {
   calculator: "ClipDetectionVectorSizeCalculator"
-  input_stream: "all_palm_detections"
-  output_stream: "palm_detections"
+  input_stream: "all_body_detections"
+  output_stream: "body_detections"
   input_side_packet: "num_poses"
 }
 
 # Extracts image size.
 node {
   calculator: "ImagePropertiesCalculator"
-  input_stream: "IMAGE:palm_detection_image"
-  output_stream: "SIZE:palm_detection_image_size"
+  input_stream: "IMAGE:body_detection_image"
+  output_stream: "SIZE:body_detection_image_size"
 }
 
-# Outputs each element of palm_detections at a fake timestamp for the rest of
-# the graph to process. Clones the image size packet for each palm_detection at
+# Outputs each element of body_detections at a fake timestamp for the rest of
+# the graph to process. Clones the image size packet for each body_detection at
 # the fake timestamp. At the end of the loop, outputs the BATCH_END timestamp
 # for downstream calculators to inform them that all elements in the vector have
 # been processed.
 node {
   calculator: "BeginLoopDetectionCalculator"
-  input_stream: "ITERABLE:palm_detections"
-  input_stream: "CLONE:palm_detection_image_size"
-  output_stream: "ITEM:palm_detection"
-  output_stream: "CLONE:image_size_for_palms"
-  output_stream: "BATCH_END:palm_detections_timestamp"
+  input_stream: "ITERABLE:body_detections"
+  input_stream: "CLONE:body_detection_image_size"
+  output_stream: "ITEM:body_detection"
+  output_stream: "CLONE:image_size_for_bodies"
+  output_stream: "BATCH_END:body_detections_timestamp"
 }
 
-# Calculates region of interest (ROI) based on the specified palm.
+# Calculates region of interest (ROI) based on the specified body.
 node {
   calculator: "PoseDetectionToRoi"
-  input_stream: "DETECTION:palm_detection"
-  input_stream: "IMAGE_SIZE:image_size_for_palms"
-  output_stream: "ROI:pose_rect_from_palm_detection"
+  input_stream: "DETECTION:body_detection"
+  input_stream: "IMAGE_SIZE:image_size_for_bodies"
+  output_stream: "ROI:pose_rect_from_body_detection"
 }
 
 # Collects a NormalizedRect for each pose into a vector. Upon receiving the
@@ -124,18 +124,18 @@ node {
 # timestamp.
 node {
   calculator: "EndLoopNormalizedRectCalculator"
-  input_stream: "ITEM:pose_rect_from_palm_detection"
-  input_stream: "BATCH_END:palm_detections_timestamp"
-  output_stream: "ITERABLE:pose_rects_from_palm_detections"
+  input_stream: "ITEM:pose_rect_from_body_detection"
+  input_stream: "BATCH_END:body_detections_timestamp"
+  output_stream: "ITERABLE:pose_rects_from_body_detections"
 }
 
 # Performs association between NormalizedRect vector elements from previous
-# image and rects based on palm detections from the current image. This
+# image and rects based on body detections from the current image. This
 # calculator ensures that the output pose_rects vector doesn't contain
 # overlapping regions based on the specified min_similarity_threshold.
 node {
   calculator: "AssociationNormRectCalculator"
-  input_stream: "pose_rects_from_palm_detections"
+  input_stream: "pose_rects_from_body_detections"
   input_stream: "gated_prev_pose_rects_from_landmarks"
   output_stream: "pose_rects"
   options: {
