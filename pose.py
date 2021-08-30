@@ -50,7 +50,9 @@ def main():
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-        # mp_drawing.draw_landmarks(image, results.pose_landmarks, connections)
+        if results.multi_pose_landmarks:
+            for landmarks in results.multi_pose_landmarks:
+                mp_drawing.draw_landmarks(image, landmarks, connections)
 
         cv2.imshow('MediaPipe Multi Pose', image)
         if cv2.waitKey(5) & 0xFF == 27:

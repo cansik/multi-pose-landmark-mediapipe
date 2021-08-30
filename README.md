@@ -35,9 +35,44 @@ pip install numpy
 sudo apt-get install libegl1-mesa-dev
 ```
 
+#### Detection
+
 ```
 bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_detection:pose_detection_cpu
 ```
+
+#### Multi Pose Landmark
+
+```
+bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_landmark:multi_pose_landmark_cpu
+```
+
+### Current Bug
+
+If head is not detected properly, graph breaks with the following exception:
+
+```python
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+E20210830 18:36:36.496217 24428 calculator_graph.cc:804] INTERNAL: CalculatorGraph::Run() failed in Run: 
+Calculator::Process() for node "poselandmarkbyroicpu__poselandmarksandsegmentationinverseprojection__InverseMatrixCalculator" failed: ; Inverse matrix cannot be calculated.tors/util/inverse_matrix_calculator.cc:38) 
+Traceback (most recent call last):
+  File "C:\Users\flori\git\zhdk\multi-pose-mediapipe\pose.py", line 63, in <module>
+    main()
+  File "C:\Users\flori\git\zhdk\multi-pose-mediapipe\pose.py", line 47, in main
+    results = pose.process(image)
+  File "C:\Users\flori\git\zhdk\multi-pose-mediapipe\mpx\solution_base.py", line 334, in process
+    self._graph.wait_until_idle()
+RuntimeError: CalculatorGraph::Run() failed in Run: 
+Calculator::Process() for node "poselandmarkbyroicpu__poselandmarksandsegmentationinverseprojection__InverseMatrixCalculator" failed: ; Inverse matrix cannot be calculated.tors/util/inverse_matrix_calculator.cc:38) 
+[ WARN:0] global C:\Users\runneradmin\AppData\Local\Temp\pip-req-build-sn_xpupm\opencv\modules\videoio\src\cap_msmf.cpp (438) `anonymous-namespace'::SourceReaderCB::~SourceReaderCB terminating async callback
+
+Process finished with exit code 1
+```
+
+### Graph
+
+![](graphs/pose_landmark_tracking_cpu.png)
 
 ### About
 Based on [mediapipe-osc](https://github.com/cansik/mediapipe-osc/).
