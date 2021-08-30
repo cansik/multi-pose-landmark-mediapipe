@@ -1,6 +1,7 @@
 import enum
 from typing import NamedTuple
 
+import mediapipe
 import numpy as np
 
 from mediapipe.calculators.core import constant_side_packet_calculator_pb2
@@ -47,11 +48,12 @@ class MultiPose(SolutionBase):
                  enable_segmentation=False,
                  smooth_segmentation=True,
                  min_detection_confidence=0.5,
-                 min_tracking_confidence=0.5):
+                 min_tracking_confidence=0.5,
+                 max_num_poses=2):
         super().__init__(
             binary_graph_path=BINARYPB_FILE_PATH,
             side_inputs={
-
+                'num_poses': max_num_poses,
             },
             calculator_params={
             })
