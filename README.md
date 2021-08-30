@@ -66,11 +66,11 @@ WARNING: Logging before InitGoogleLogging() is written to STDERR
 E20210830 18:36:36.496217 24428 calculator_graph.cc:804] INTERNAL: CalculatorGraph::Run() failed in Run: 
 Calculator::Process() for node "poselandmarkbyroicpu__poselandmarksandsegmentationinverseprojection__InverseMatrixCalculator" failed: ; Inverse matrix cannot be calculated.tors/util/inverse_matrix_calculator.cc:38) 
 Traceback (most recent call last):
-  File "C:\Users\flori\git\zhdk\multi-pose-mediapipe\pose.py", line 63, in <module>
+  File "C:\Users\user\multi-pose-mediapipe\pose.py", line 63, in <module>
     main()
-  File "C:\Users\flori\git\zhdk\multi-pose-mediapipe\pose.py", line 47, in main
+  File "C:\Users\user\multi-pose-mediapipe\pose.py", line 47, in main
     results = pose.process(image)
-  File "C:\Users\flori\git\zhdk\multi-pose-mediapipe\mpx\solution_base.py", line 334, in process
+  File "C:\Users\user\multi-pose-mediapipe\mpx\solution_base.py", line 334, in process
     self._graph.wait_until_idle()
 RuntimeError: CalculatorGraph::Run() failed in Run: 
 Calculator::Process() for node "poselandmarkbyroicpu__poselandmarksandsegmentationinverseprojection__InverseMatrixCalculator" failed: ; Inverse matrix cannot be calculated.tors/util/inverse_matrix_calculator.cc:38) 
