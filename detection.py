@@ -3,10 +3,8 @@ import math
 
 import cv2
 import mediapipe as mp
-from mediapipe.framework.formats import landmark_pb2
 
-import multi_pose
-from pose_detection import PoseDetection
+from mpx.pose_detection import PoseDetection
 from utils import add_default_args, get_video_input
 
 
@@ -52,9 +50,14 @@ def main():
             for det in results.detections:
                 mp_drawing.draw_detection(image, det)
 
+                # Key point 0 - mid hip center
+                # Key point 1 - point that encodes size & rotation (for full body)
+                # Key point 2 - mid shoulder center
+                # Key point 3 - point that encodes size & rotation (for upper body)
+
                 # draw body circle
                 mid_hip_center = det.location_data.relative_keypoints[0]
-                full_body_info = det.location_data.relative_keypoints[1]
+                full_body_info = det.location_data.relative_keypoints[3]
 
                 center = (round(mid_hip_center.x * image.shape[1]), round(mid_hip_center.y * image.shape[0]))
                 info = (round(full_body_info.x * image.shape[1]), round(full_body_info.y * image.shape[0]))

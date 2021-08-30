@@ -1,11 +1,9 @@
 import argparse
 
 import cv2
-import mediapipe as mp
-from mediapipe.framework.formats import landmark_pb2
 
-import multi_pose
-from pose_detection import PoseDetection
+import mediapipe as mp
+from mpx import multi_pose
 from utils import add_default_args, get_video_input
 
 
@@ -30,10 +28,6 @@ def main():
         min_detection_confidence=args.min_detection_confidence,
         min_tracking_confidence=args.min_tracking_confidence)
 
-    detection = PoseDetection(
-        static_image_mode=args.static_image_mode,
-        min_detection_confidence=args.min_detection_confidence)
-
     cap = cv2.VideoCapture(get_video_input(args.input))
 
     # fix bug which occurs because draw landmarks is not adapted to upper pose
@@ -51,17 +45,12 @@ def main():
         # pass by reference.
         image.flags.writeable = False
         results = pose.process(image)
-        detections = detection.process(image)
 
         # Draw the pose annotation on the image.
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-        mp_drawing.draw_landmarks(image, results.pose_landmarks, connections)
-
-        if detections.detections:
-            for det in detections.detections:
-                mp_drawing.draw_detection(image, det)
+        # mp_drawing.draw_landmarks(image, results.pose_landmarks, connections)
 
         cv2.imshow('MediaPipe Multi Pose', image)
         if cv2.waitKey(5) & 0xFF == 27:

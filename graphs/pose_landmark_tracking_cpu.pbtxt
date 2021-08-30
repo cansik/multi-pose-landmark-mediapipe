@@ -174,7 +174,6 @@ node {
   input_stream: "IMAGE:image_for_landmarks"
   input_stream: "ROI:single_pose_rect"
   output_stream: "LANDMARKS:single_pose_landmarks"
-  output_stream: "POSEEDNESS:single_poseedness"
 }
 
 # Calculate region of interest (ROI) based on detected pose landmarks to reuse
