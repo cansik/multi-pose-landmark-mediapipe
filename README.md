@@ -1,6 +1,9 @@
 # Multi Pose MediaPipe
 [MediaPipe](https://google.github.io/mediapipe/) multi pose detection example. The graph is adapted from the [HandLandmarkTrackingCpu](https://github.com/google/mediapipe/blob/master/mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.pbtxt) example by mediapipe.
 
+![](images/pexels-allan-mas-5368956-annotated.jpg)
+*Source: [Allan Mas](https://www.pexels.com/photo/energetic-asian-men-performing-breakdance-under-elevated-highway-5368956/)*
+
 ### Install & Run
 
 Currently, this is only tested on Windows and MacOS. It's recommended to use Python3 (`>3.7`) and a virtual environment.
@@ -15,8 +18,8 @@ To run an example use the basic python command to start up the script.
 # start pose detection with webcam
 python pose.py
 
-# start pose detection with video
-python pose.py --input yoga.mp4
+# pose detection with single image
+python pose.py --image images/pexels-allan-mas-5368956.jpg
 ```
 
 ### How to build pbbinary

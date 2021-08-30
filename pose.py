@@ -15,11 +15,15 @@ def main():
                         help="Set model complexity (0=Light, 1=Full, 2=Heavy).")
     parser.add_argument("--no-smooth-landmarks", action="store_false", help="Disable landmark smoothing.")
     parser.add_argument("--static-image-mode", action="store_true", help="Enables static image mode.")
+    parser.add_argument("--image", default=None, type=str, help="Input image path.")
     args = parser.parse_args()
 
     # setup camera loop
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = multi_pose
+
+    # fix bug which occurs because draw landmarks is not adapted to upper pose
+    connections = mp_pose.POSE_CONNECTIONS
 
     pose = mp_pose.MultiPose(
         smooth_landmarks=args.no_smooth_landmarks,
@@ -28,10 +32,24 @@ def main():
         min_detection_confidence=args.min_detection_confidence,
         min_tracking_confidence=args.min_tracking_confidence)
 
-    cap = cv2.VideoCapture(get_video_input(args.input))
+    if args.image:
+        # inference on a single image
+        image = cv2.imread(args.image)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = pose.process(image)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    # fix bug which occurs because draw landmarks is not adapted to upper pose
-    connections = mp_pose.POSE_CONNECTIONS
+        if results.multi_pose_landmarks:
+            for landmarks in results.multi_pose_landmarks:
+                mp_drawing.draw_landmarks(image, landmarks, connections)
+
+        cv2.imshow('MediaPipe Multi Pose', image)
+        cv2.waitKey()
+
+        pose.close()
+        exit(0)
+
+    cap = cv2.VideoCapture(get_video_input(args.input))
 
     while cap.isOpened():
         success, image = cap.read()
