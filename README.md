@@ -1,5 +1,5 @@
 # Multi Pose MediaPipe
-[MediaPipe](https://google.github.io/mediapipe/) multi pose detection example. The graph is adapted from the [HandLandmarkTrackingCpu](https://github.com/google/mediapipe/blob/master/mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.pbtxt) example by mediapipe.
+[MediaPipe](https://google.github.io/mediapipe/) multi pose detection example. The graph has been adapted from the [HandLandmarkTrackingCpu](https://github.com/google/mediapipe/blob/master/mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.pbtxt) example by mediapipe. This is only a proof of concept and is provided for educational purposes.
 
 ![](images/pexels-allan-mas-5368956-annotated.jpg)
 *Source: [Allan Mas](https://www.pexels.com/photo/energetic-asian-men-performing-breakdance-under-elevated-highway-5368956/)*
@@ -22,7 +22,13 @@ python pose.py
 python pose.py --image images/pexels-allan-mas-5368956.jpg
 ```
 
-### How to build pbbinary
+There is also a pre-compiled pose detection graph which is not included by default by the mediapipe python distribution package. It is possible to run the example with the following command:
+
+```bash
+python detection.py
+```
+
+### How to build pbbinary in WSL
 
 ```
 sudo apt update && sudo apt install bazel-3.7.2
