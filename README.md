@@ -1,5 +1,5 @@
 # Multi Pose MediaPipe
-[MediaPipe](https://google.github.io/mediapipe/) multi pose detection example.
+[MediaPipe](https://google.github.io/mediapipe/) multi pose detection example. The graph is adapted from the [HandLandmarkTrackingCpu](https://github.com/google/mediapipe/blob/master/mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.pbtxt) example by mediapipe.
 
 ### Install & Run
 
