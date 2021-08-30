@@ -6,7 +6,7 @@
 # This graph tries to skip body detection as much as possible by reusing
 # previously detected/predicted landmarks for new images.
 
-type: "HandLandmarkTrackingCpu"
+type: "MultiPoseLandmarkCpu"
 
 # CPU image. (ImageFrame)
 input_stream: "IMAGE:image"
