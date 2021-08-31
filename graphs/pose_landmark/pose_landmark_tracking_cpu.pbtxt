@@ -137,6 +137,7 @@ node {
 # calculator ensures that the output pose_rects vector doesn't contain
 # overlapping regions based on the specified min_similarity_threshold.
 node {
+  name: "AssociationNormRectCalculator"
   calculator: "AssociationNormRectCalculator"
   input_stream: "pose_rects_from_body_detections"
   input_stream: "gated_prev_pose_rects_from_landmarks"

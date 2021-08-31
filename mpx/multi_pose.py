@@ -49,7 +49,8 @@ class MultiPose(SolutionBase):
                  smooth_segmentation=True,
                  min_detection_confidence=0.5,
                  min_tracking_confidence=0.5,
-                 max_num_poses=2):
+                 max_num_poses=2,
+                 min_similarity_threshold=0.5):
 
         super().__init__(
             binary_graph_path=BINARYPB_FILE_PATH,
@@ -69,6 +70,8 @@ class MultiPose(SolutionBase):
                     min_detection_confidence,
                 'poselandmarkbyroicpu__tensorstoposelandmarksandsegmentation__ThresholdingCalculator.threshold':
                     min_tracking_confidence,
+                'AssociationNormRectCalculator.min_similarity_threshold':
+                    float(min_similarity_threshold),
             })
 
         def process(self, image: np.ndarray) -> NamedTuple:
