@@ -5,10 +5,12 @@ from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 import mediapipe as mp
 from mpx import multi_pose
-from utils import get_video_input, draw_pose_rect
+from utils import get_video_input, draw_pose_rect, TimeInstrument, draw_opac_rect
 
 debug_on = False
-colors = [(255, 0, 0,), [0, 255, 0], [0, 0, 255]]
+colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+
+time_instrument = TimeInstrument()
 
 
 def sec_len(it):
@@ -16,6 +18,17 @@ def sec_len(it):
         return len(it)
     else:
         return "-"
+
+
+def draw_infos(image, pose_count):
+    ih, iw = image.shape[:2]
+    rw, rh = 290, 20
+
+    # show infos
+    draw_opac_rect(image, 0, ih - rh, rw, rh)
+    cv2.putText(image, "FPS: %.0f Latency: %.2fms Poses: %s"
+                % (time_instrument.fps, time_instrument.latency, pose_count),
+                (7, ih - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (55, 55, 55), 1, cv2.LINE_AA)
 
 
 def detect_and_annotate(pose, mp_drawing, connections, image, flip=False):
@@ -29,7 +42,9 @@ def detect_and_annotate(pose, mp_drawing, connections, image, flip=False):
     # pass by reference.
     image.flags.writeable = False
     try:
+        time_instrument.start()
         results = pose.process(image)
+        time_instrument.stop()
     except RuntimeError as ex:
         print(f"Error: ${ex}")
         exit(1)
@@ -45,17 +60,32 @@ def detect_and_annotate(pose, mp_drawing, connections, image, flip=False):
             mp_drawing.draw_landmarks(image, landmarks, connections,
                                       connection_drawing_spec=DrawingSpec(color=color, thickness=2))
 
+    draw_infos(image, sec_len(results.multi_pose_landmarks))
+
     if debug_on:
         # annotate pose_rects_from_body_detections / pose_rects
-        if results.pose_rects_from_body_detections:
-            for i, rect in enumerate(results.pose_rects_from_body_detections):
-                color = colors[i]
-                draw_pose_rect(image, rect, color=color)
-                cv2.circle(image, (round(rect.x_center * image.shape[1]), round(rect.y_center * image.shape[0])), 20, color, 1)
+        if results.pose_rects:
+            for i, rect in enumerate(results.pose_rects):
+                draw_pose_rect(image, rect, color=(255, 0, 0))
+                cv2.circle(image, (round(rect.x_center * image.shape[1]),
+                                   round(rect.y_center * image.shape[0])), 20, (255, 0, 0), 1)
 
-        print(f"pose_rects_from_body_detections: {sec_len(results.pose_rects_from_body_detections)}\t"
+            if results.pose_rects_from_landmarks:
+                for i, rect in enumerate(results.pose_rects_from_landmarks):
+                    draw_pose_rect(image, rect, color=(0, 255, 0))
+                    cv2.circle(image, (round(rect.x_center * image.shape[1]),
+                                       round(rect.y_center * image.shape[0])), 20, (255, 0, 0), 1)
+
+        body_detections = results.body_detections
+        if body_detections:
+            pass
+
+        print(f"prev_pose_rects_from_landmarks: {sec_len(results.prev_pose_rects_from_landmarks)}\t"
+              f"body_detections: {sec_len(results.body_detections)}\t"
+              f"pose_rects_from_body_detections: {sec_len(results.pose_rects_from_body_detections)}\t"
               f"pose_rects: {sec_len(results.pose_rects)}\t"
-              f"multi_pose_landmarks: {sec_len(results.multi_pose_landmarks)}\t")
+              f"multi_pose_landmarks: {sec_len(results.multi_pose_landmarks)}\t"
+              f"pose_rects_from_landmarks: {sec_len(results.pose_rects_from_landmarks)}")
 
     return image
 
@@ -74,7 +104,7 @@ def main():
                         help="Minimum confidence value ([0.0, 1.0]) for the detection to be considered successful.")
     parser.add_argument("-mtc", "--min-tracking-confidence", type=float, default=0.5,
                         help="Minimum confidence value ([0.0, 1.0]) to be considered tracked successfully.")
-    parser.add_argument("-mst", "--min-similarity-threshold", type=float, default=0.9,
+    parser.add_argument("-mst", "--min-similarity-threshold", type=float, default=0.5,
                         help="Min IoU similarity to be the same pose rect.")
     parser.add_argument("--max-num-poses", type=int, default=2, help="Max poses to be detected.")
 
@@ -83,6 +113,16 @@ def main():
     parser.add_argument("--wait", action="store_true", help="Wait for use input to capture next frame.")
     parser.add_argument("--debug", action="store_true", help="Show debug output.")
     args = parser.parse_args()
+
+    # parse arguments
+    flip_input = args.input.isnumeric()
+
+    wait_time = 1
+    if args.wait:
+        wait_time = None
+
+    global debug_on
+    debug_on = args.debug
 
     # setup camera loop
     mp_drawing = mp.solutions.drawing_utils
@@ -111,14 +151,6 @@ def main():
         exit(0)
 
     cap = cv2.VideoCapture(get_video_input(args.input))
-    flip_input = args.input.isnumeric()
-
-    wait_time = 5
-    if args.wait:
-        wait_time = 0
-
-    global debug_on
-    debug_on = args.debug
 
     while cap.isOpened():
         success, image = cap.read()

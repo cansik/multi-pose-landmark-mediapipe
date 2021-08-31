@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # todo: fill in your directories
-mediapipe_dir="temp/mediapipe"
-mp_pose_dir="multi-pose-mediapipe"
+mediapipe_dir=""
+mp_pose_dir=""
+
+if test -f "config.sh"; then
+    source config.sh
+fi
 
 pushd () {
     command pushd "$@" > /dev/null
@@ -24,9 +28,9 @@ cp -f "$mp_pose_dir/graphs/pose_detection/BUILD" "mediapipe/modules/pose_detecti
 
 # build all binarypbs
 echo "build..."
-bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_detection:pose_detection_cpu
-bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_detection:pose_detection_with_roi_cpu
-bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_landmark:multi_pose_landmark_cpu
+bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_detection:pose_detection_cpu
+bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_detection:pose_detection_with_roi_cpu
+bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_landmark:multi_pose_landmark_cpu
 
 popd
 

@@ -8,3 +8,4 @@ ubvenv
 *.params
 *.inc
 *.cc
+config.sh

@@ -43,6 +43,7 @@ from mediapipe.calculators.util import landmarks_smoothing_calculator_pb2
 from mediapipe.calculators.util import logic_calculator_pb2
 from mediapipe.calculators.util import thresholding_calculator_pb2
 from mediapipe.calculators.util import association_calculator_pb2
+from mediapipe.calculators.util import rect_transformation_calculator_pb2
 from mediapipe.framework.formats import classification_pb2
 from mediapipe.framework.formats import landmark_pb2
 from mediapipe.framework.formats import rect_pb2
@@ -78,7 +79,9 @@ CALCULATOR_TO_OPTIONS = {
         lift_2d_frame_annotation_to_3d_calculator_pb2
             .Lift2DFrameAnnotationTo3DCalculatorOptions,
     'AssociationNormRectCalculator':
-        association_calculator_pb2.AssociationCalculatorOptions
+        association_calculator_pb2.AssociationCalculatorOptions,
+    'RectTransformationCalculator':
+        rect_transformation_calculator_pb2.RectTransformationCalculatorOptions
 }
 
 

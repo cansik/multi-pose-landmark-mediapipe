@@ -36,6 +36,16 @@ from mediapipe.python.solutions.pose_connections import POSE_CONNECTIONS
 # pylint: enable=unused-import
 from mpx.solution_base import SolutionBase
 
+
+def _download_oss_pose_landmark_model(model_complexity):
+    if model_complexity == 0:
+        download_utils.download_oss_model(
+            'mediapipe/modules/pose_landmark/pose_landmark_lite.tflite')
+    elif model_complexity == 2:
+        download_utils.download_oss_model(
+            'mediapipe/modules/pose_landmark/pose_landmark_heavy.tflite')
+
+
 BINARYPB_FILE_PATH = 'mediapipe/modules/pose_landmark/multi_pose_landmark_cpu.binarypb'
 
 
@@ -51,6 +61,7 @@ class MultiPose(SolutionBase):
                  min_tracking_confidence=0.5,
                  max_num_poses=2,
                  min_similarity_threshold=0.5):
+        _download_oss_pose_landmark_model(model_complexity)
 
         super().__init__(
             binary_graph_path=BINARYPB_FILE_PATH,
@@ -72,6 +83,11 @@ class MultiPose(SolutionBase):
                     min_tracking_confidence,
                 'AssociationNormRectCalculator.min_similarity_threshold':
                     float(min_similarity_threshold),
+                # do not scale it up to high
+                'poselandmarkstoroi__RectTransformationCalculator.scale_x': 1.1,
+                'poselandmarkstoroi__RectTransformationCalculator.scale_y': 1.1,
+                # 'poselandmarkstoroi__RectTransformationCalculator.shift_y': 8,
+                # 'poselandmarkstoroi__RectTransformationCalculator.square_long': bool(False)
             })
 
         def process(self, image: np.ndarray) -> NamedTuple:

@@ -34,6 +34,8 @@ output_stream: "POSE_ROIS_FROM_LANDMARKS:pose_rects"
 # Regions of interest calculated based on body detections.
 # (std::vector<NormalizedRect>)
 output_stream: "POSE_ROIS_FROM_BODY_DETECTIONS:pose_rects_from_body_detections"
+output_stream: "PREV_POSE_RECTS_FROM_LANDMARKS:prev_pose_rects_from_landmarks"
+output_stream: "POSE_RECTS_FROM_LANDMARKS:pose_rects_from_landmarks"
 
 # Defines whether landmarks on the previous image should be used to help
 # localize landmarks on the current image.
@@ -180,6 +182,7 @@ node {
   input_side_packet: "ENABLE_SEGMENTATION:enable_segmentation"
   input_side_packet: "MODEL_COMPLEXITY:model_complexity"
   output_stream: "LANDMARKS:single_pose_landmarks"
+  output_stream: "AUXILIARY_LANDMARKS:unfiltered_auxiliary_landmarks"
 }
 
 # Calculate region of interest (ROI) based on detected pose landmarks to reuse
@@ -187,7 +190,7 @@ node {
 node {
   calculator: "PoseLandmarksToRoi"
   input_stream: "IMAGE_SIZE:image_size_for_landmarks"
-  input_stream: "LANDMARKS:single_pose_landmarks"
+  input_stream: "LANDMARKS:unfiltered_auxiliary_landmarks"
   output_stream: "ROI:single_pose_rect_from_landmarks"
 }
 
