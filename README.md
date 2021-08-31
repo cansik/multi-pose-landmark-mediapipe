@@ -101,7 +101,7 @@ This could be due to a tracking error.
 
 ![](graphs/pose_detection/pose_detection_with_roi_cpu.png)
 
-#### Pose Landmark Tracking CPU
+#### Multi Pose Landmark Tracking CPU
 
 ![](graphs/pose_landmark/pose_landmark_tracking_cpu.png)
 
