@@ -2,6 +2,8 @@ import argparse
 import math
 
 import cv2
+import numpy as np
+
 import mediapipe as mp
 
 from mpx.pose_detection import PoseDetection
@@ -45,6 +47,9 @@ def main():
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+        image_width = image.shape[1]
+        image_height = image.shape[0]
+
         if results.detections:
             for det in results.detections:
                 mp_drawing.draw_detection(image, det)
@@ -58,11 +63,21 @@ def main():
                 mid_hip_center = det.location_data.relative_keypoints[0]
                 full_body_info = det.location_data.relative_keypoints[1]
 
-                center = (round(mid_hip_center.x * image.shape[1]), round(mid_hip_center.y * image.shape[0]))
-                info = (round(full_body_info.x * image.shape[1]), round(full_body_info.y * image.shape[0]))
+                center = (round(mid_hip_center.x * image_width), round(mid_hip_center.y * image_height))
+                info = (round(full_body_info.x * image_width), round(full_body_info.y * image_height))
 
                 radius = round(distance(center, info))
                 cv2.circle(image, center, radius, (0, 0, 255), 1)
+
+            for rect in results.rects_from_detections:
+                # draw body rect
+                world_rect = [(rect.x_center * image_width, rect.y_center * image_height),
+                              (rect.width * image_width, rect.height * image_height),
+                              rect.rotation]
+
+                box = cv2.boxPoints(world_rect)
+                box = np.int0(box)
+                cv2.drawContours(image, [box], 0, (255, 0, 255), 2)
 
         cv2.imshow('MediaPipe Multi Pose', image)
         if cv2.waitKey(5) & 0xFF == 27:
