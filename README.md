@@ -56,8 +56,12 @@ bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapip
 bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_landmark:multi_pose_landmark_cpu
 ```
 
-### Current Bug
+### Problems and Bugs
 
+#### Landmark Smoothing
+At the moment the landmark filter is not implemented into the graph.
+
+#### Inverse Mat Bug
 Only if `static-image-mode` is not enabled.
 If head is not detected properly, graph breaks with the following exception:
 
