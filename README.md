@@ -93,8 +93,7 @@ Calculator::Process() for node "poselandmarkbyroicpu__poselandmarksandsegmentati
 Process finished with exit code 1
 ```
 
-This could be due to a tracking error.
-
+This could be due to a tracking error. The graph could have an error the the right body is not detected and marked again (tracking).
 ### Graphs
 
 #### Pose Detection with ROI CPU
