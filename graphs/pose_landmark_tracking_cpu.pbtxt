@@ -22,6 +22,9 @@ input_side_packet: "NUM_POSES:num_poses"
 # this packet so that they don't wait for it unnecessarily.
 output_stream: "LANDMARKS:multi_pose_landmarks"
 
+input_side_packet: "ENABLE_SEGMENTATION:enable_segmentation"
+input_side_packet: "MODEL_COMPLEXITY:model_complexity"
+
 # Extra outputs (for debugging, for instance).
 # Detected bodies. (std::vector<Detection>)
 output_stream: "BODY_DETECTIONS:body_detections"
@@ -173,6 +176,8 @@ node {
   calculator: "PoseLandmarkByRoiCpu"
   input_stream: "IMAGE:image_for_landmarks"
   input_stream: "ROI:single_pose_rect"
+  input_side_packet: "ENABLE_SEGMENTATION:enable_segmentation"
+  input_side_packet: "MODEL_COMPLEXITY:model_complexity"
   output_stream: "LANDMARKS:single_pose_landmarks"
 }
 
