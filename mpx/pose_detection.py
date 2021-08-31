@@ -35,11 +35,11 @@ from mediapipe.python.solutions.pose_connections import POSE_CONNECTIONS
 # pylint: enable=unused-import
 from mpx.solution_base import SolutionBase
 
-BINARYPB_FILE_PATH = 'mediapipe/modules/pose_detection/pose_detection_cpu.binarypb'
+BINARYPB_FILE_PATH = 'mediapipe/modules/pose_detection/pose_detection_with_roi_cpu.binarypb'
 
 
 class PoseDetection(SolutionBase):
-    def __init__(self, static_image_mode=False, min_detection_confidence=0.5):
+    def __init__(self, min_detection_confidence=0.5):
         super().__init__(
             binary_graph_path=BINARYPB_FILE_PATH,
             side_inputs={

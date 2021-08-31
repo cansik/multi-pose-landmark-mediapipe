@@ -17,7 +17,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=str, default="0",
                         help="The video input path or video camera id (device id).")
-    parser.add_argument("--static-image-mode", action="store_true", help="Enables static image mode.")
     parser.add_argument("-mdc", "--min-detection-confidence", type=float, default=0.5,
                         help="Minimum confidence value ([0.0, 1.0]) for the detection to be considered successful.")
     args = parser.parse_args()
@@ -25,9 +24,7 @@ def main():
     # setup camera loop
     mp_drawing = mp.solutions.drawing_utils
 
-    detection = PoseDetection(
-        static_image_mode=args.static_image_mode,
-        min_detection_confidence=args.min_detection_confidence)
+    detection = PoseDetection(min_detection_confidence=args.min_detection_confidence)
 
     cap = cv2.VideoCapture(get_video_input(args.input))
 
