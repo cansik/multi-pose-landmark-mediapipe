@@ -86,7 +86,7 @@ Process finished with exit code 1
 
 ### Graph
 
-![](graphs/pose_landmark_tracking_cpu.png)
+![](graphs/pose_landmark/pose_landmark_tracking_cpu.png)
 
 ### About
 Based on [mediapipe-osc](https://github.com/cansik/mediapipe-osc/).

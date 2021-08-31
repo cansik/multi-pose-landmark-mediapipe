@@ -5,7 +5,7 @@ import cv2
 import mediapipe as mp
 
 from mpx.pose_detection import PoseDetection
-from utils import add_default_args, get_video_input
+from utils import get_video_input
 
 
 def distance(p1, p2) -> float:
@@ -15,9 +15,11 @@ def distance(p1, p2) -> float:
 def main():
     # read arguments
     parser = argparse.ArgumentParser()
-    add_default_args(parser)
-    parser.add_argument("--no-smooth-landmarks", action="store_false", help="Disable landmark smoothing.")
+    parser.add_argument("--input", type=str, default="0",
+                        help="The video input path or video camera id (device id).")
     parser.add_argument("--static-image-mode", action="store_true", help="Enables static image mode.")
+    parser.add_argument("-mdc", "--min-detection-confidence", type=float, default=0.5,
+                        help="Minimum confidence value ([0.0, 1.0]) for the detection to be considered successful.")
     args = parser.parse_args()
 
     # setup camera loop
