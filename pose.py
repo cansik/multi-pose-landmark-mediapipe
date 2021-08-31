@@ -7,6 +7,33 @@ from mpx import multi_pose
 from utils import get_video_input
 
 
+def detect_and_annotate(pose, mp_drawing, connections, image, flip=False):
+    # Flip the image horizontally for a later selfie-view display, and convert
+    # the BGR image to RGB.
+    if flip:
+        image = cv2.flip(image, 1)
+
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # To improve performance, optionally mark the image as not writeable to
+    # pass by reference.
+    image.flags.writeable = False
+    try:
+        results = pose.process(image)
+    except RuntimeError as ex:
+        print(f"Error: ${ex}")
+        exit(1)
+
+    # Draw the pose annotation on the image.
+    image.flags.writeable = True
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+    if results.multi_pose_landmarks:
+        for landmarks in results.multi_pose_landmarks:
+            mp_drawing.draw_landmarks(image, landmarks, connections)
+
+    return image
+
+
 def main():
     # read arguments
     parser = argparse.ArgumentParser()
@@ -44,14 +71,7 @@ def main():
     if args.image:
         # inference on a single image
         image = cv2.imread(args.image)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        results = pose.process(image)
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-        if results.multi_pose_landmarks:
-            for landmarks in results.multi_pose_landmarks:
-                mp_drawing.draw_landmarks(image, landmarks, connections)
-
+        image = detect_and_annotate(pose, mp_drawing, connections, image)
         cv2.imshow('MediaPipe Multi Pose', image)
         cv2.waitKey()
 
@@ -59,31 +79,14 @@ def main():
         exit(0)
 
     cap = cv2.VideoCapture(get_video_input(args.input))
+    flip_input = args.input.isnumeric()
 
     while cap.isOpened():
         success, image = cap.read()
         if not success:
             break
 
-        # Flip the image horizontally for a later selfie-view display, and convert
-        # the BGR image to RGB.
-        image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
-        # To improve performance, optionally mark the image as not writeable to
-        # pass by reference.
-        image.flags.writeable = False
-        try:
-            results = pose.process(image)
-        except RuntimeError as ex:
-            print(f"Error: ${ex}")
-            exit(1)
-
-        # Draw the pose annotation on the image.
-        image.flags.writeable = True
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-        if results.multi_pose_landmarks:
-            for landmarks in results.multi_pose_landmarks:
-                mp_drawing.draw_landmarks(image, landmarks, connections)
+        image = detect_and_annotate(pose, mp_drawing, connections, image, flip=flip_input)
 
         cv2.imshow('MediaPipe Multi Pose', image)
         if cv2.waitKey(5) & 0xFF == 27:
