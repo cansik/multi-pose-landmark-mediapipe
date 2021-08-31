@@ -57,7 +57,7 @@ def main():
 
                 # draw body circle
                 mid_hip_center = det.location_data.relative_keypoints[0]
-                full_body_info = det.location_data.relative_keypoints[3]
+                full_body_info = det.location_data.relative_keypoints[1]
 
                 center = (round(mid_hip_center.x * image.shape[1]), round(mid_hip_center.y * image.shape[0]))
                 info = (round(full_body_info.x * image.shape[1]), round(full_body_info.y * image.shape[0]))

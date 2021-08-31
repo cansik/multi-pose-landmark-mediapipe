@@ -50,12 +50,25 @@ class MultiPose(SolutionBase):
                  min_detection_confidence=0.5,
                  min_tracking_confidence=0.5,
                  max_num_poses=2):
+
         super().__init__(
             binary_graph_path=BINARYPB_FILE_PATH,
             side_inputs={
                 'num_poses': max_num_poses,
+                'model_complexity': model_complexity,
+                # 'smooth_landmarks': smooth_landmarks and not static_image_mode,
+                'enable_segmentation': enable_segmentation,
+                # 'smooth_segmentation': smooth_segmentation and not static_image_mode,
             },
             calculator_params={
+                'ConstantSidePacketCalculator.packet': [
+                    constant_side_packet_calculator_pb2.ConstantSidePacketCalculatorOptions.ConstantSidePacket(
+                        bool_value=not static_image_mode)
+                ],
+                'posedetectioncpu__TensorsToDetectionsCalculator.min_score_thresh':
+                    min_detection_confidence,
+                'poselandmarkbyroicpu__tensorstoposelandmarksandsegmentation__ThresholdingCalculator.threshold':
+                    min_tracking_confidence,
             })
 
         def process(self, image: np.ndarray) -> NamedTuple:

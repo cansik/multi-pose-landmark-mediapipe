@@ -4,17 +4,25 @@ import cv2
 
 import mediapipe as mp
 from mpx import multi_pose
-from utils import add_default_args, get_video_input
+from utils import get_video_input
 
 
 def main():
     # read arguments
     parser = argparse.ArgumentParser()
-    add_default_args(parser)
+    parser.add_argument("--input", type=str, default="0",
+                        help="The video input path or video camera id (device id).")
     parser.add_argument("--model-complexity", default=1, type=int,
                         help="Set model complexity (0=Light, 1=Full, 2=Heavy).")
     parser.add_argument("--no-smooth-landmarks", action="store_false", help="Disable landmark smoothing.")
     parser.add_argument("--static-image-mode", action="store_true", help="Enables static image mode.")
+    parser.add_argument("--enable-segmentation", action="store_true", help="Enables segmentation.")
+    parser.add_argument("-mdc", "--min-detection-confidence", type=float, default=0.5,
+                        help="Minimum confidence value ([0.0, 1.0]) for the detection to be considered successful.")
+    parser.add_argument("-mtc", "--min-tracking-confidence", type=float, default=0.5,
+                        help="Minimum confidence value ([0.0, 1.0]) to be considered tracked successfully.")
+    parser.add_argument("--max-num-poses", type=int, default=2, help="Max poses to be detected.")
+
     parser.add_argument("--image", default=None, type=str, help="Input image path.")
     args = parser.parse_args()
 
@@ -30,7 +38,8 @@ def main():
         static_image_mode=args.static_image_mode,
         model_complexity=args.model_complexity,
         min_detection_confidence=args.min_detection_confidence,
-        min_tracking_confidence=args.min_tracking_confidence)
+        min_tracking_confidence=args.min_tracking_confidence,
+        max_num_poses=args.max_num_poses)
 
     if args.image:
         # inference on a single image
@@ -73,7 +82,6 @@ def main():
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         if results.multi_pose_landmarks:
-            print(len(results.multi_pose_landmarks))
             for landmarks in results.multi_pose_landmarks:
                 mp_drawing.draw_landmarks(image, landmarks, connections)
 

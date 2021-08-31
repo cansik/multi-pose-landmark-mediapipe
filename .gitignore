@@ -2,3 +2,9 @@
 venv
 *.pyc
 ubvenv
+*.o
+*.d
+*.lo
+*.params
+*.inc
+*.cc

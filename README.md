@@ -16,7 +16,7 @@ To run an example use the basic python command to start up the script.
 
 ```bash
 # start pose detection with webcam
-python pose.py
+python pose.py --static-image-mode
 
 # pose detection with single image
 python pose.py --image images/pexels-allan-mas-5368956.jpg
@@ -58,6 +58,7 @@ bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapip
 
 ### Current Bug
 
+Only if `static-image-mode` is not enabled.
 If head is not detected properly, graph breaks with the following exception:
 
 ```python
