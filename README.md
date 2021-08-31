@@ -29,20 +29,26 @@ python detection.py
 ```
 
 ### How to build pbbinary in WSL
+If you want to build the graphs yourself, here are some instructions on how to do it on Windows with WSL (Ubuntu 20.04).
 
 ```
+# install bazel
 sudo apt update && sudo apt install bazel-3.7.2
 sudo ln -s /usr/bin/bazel-3.7.2 /usr/bin/bazel
 ```
 
 ```
-sudo apt install python3-pip
+# install python with pip and numpy
+sudo apt install python3 python3-pip
 pip install numpy
 ```
 
 ```
+# install gl mesa packages
 sudo apt-get install libegl1-mesa-dev
 ```
+
+After these steps, download the [mediapipe](https://github.com/google/mediapipe) repository and copy the graph files into the corresponding folders. Navigation with Ubuntu to the root folder of the repository and run the following commands. The output should be found in `mediapipe/bazel-bin/mediapipe/modules/`.
 
 #### Detection
 
@@ -56,12 +62,12 @@ bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapip
 bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapipe/modules/pose_landmark:multi_pose_landmark_cpu
 ```
 
-### Problems and Bugs
+### Problems and Challenges
 
 #### Landmark Smoothing
 At the moment the landmark filter is not implemented into the graph.
 
-#### Inverse Mat Bug
+#### Inverse Mat Error
 Only if `static-image-mode` is not enabled.
 If head is not detected properly, graph breaks with the following exception:
 
@@ -83,6 +89,8 @@ Calculator::Process() for node "poselandmarkbyroicpu__poselandmarksandsegmentati
 
 Process finished with exit code 1
 ```
+
+This could be due to a tracking error.
 
 ### Graphs
 
