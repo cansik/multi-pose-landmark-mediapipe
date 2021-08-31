@@ -22,7 +22,7 @@ python pose.py --static-image-mode
 python pose.py --image images/pexels-allan-mas-5368956.jpg
 ```
 
-There is also a pre-compiled pose detection graph which is not included by default by the mediapipe python distribution package. It is possible to run the example with the following command:
+There is also a pre-compiled pose detection graph which includes the detection to ROI conversion. It is possible to run the example with the following command:
 
 ```bash
 python detection.py
@@ -84,7 +84,13 @@ Calculator::Process() for node "poselandmarkbyroicpu__poselandmarksandsegmentati
 Process finished with exit code 1
 ```
 
-### Graph
+### Graphs
+
+#### Pose Detection with ROI CPU
+
+![](graphs/pose_detection/pose_detection_with_roi_cpu.png)
+
+#### Pose Landmark Tracking CPU
 
 ![](graphs/pose_landmark/pose_landmark_tracking_cpu.png)
 
