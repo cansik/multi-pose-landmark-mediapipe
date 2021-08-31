@@ -7,7 +7,7 @@ import numpy as np
 import mediapipe as mp
 
 from mpx.pose_detection import PoseDetection
-from utils import get_video_input
+from utils import get_video_input, draw_pose_rect
 
 
 def distance(p1, p2) -> float:
@@ -71,13 +71,7 @@ def main():
 
             for rect in results.rects_from_detections:
                 # draw body rect
-                world_rect = [(rect.x_center * image_width, rect.y_center * image_height),
-                              (rect.width * image_width, rect.height * image_height),
-                              rect.rotation]
-
-                box = cv2.boxPoints(world_rect)
-                box = np.int0(box)
-                cv2.drawContours(image, [box], 0, (255, 0, 255), 2)
+                draw_pose_rect(image, rect)
 
         cv2.imshow('MediaPipe Multi Pose', image)
         if cv2.waitKey(5) & 0xFF == 27:

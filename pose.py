@@ -4,7 +4,7 @@ import cv2
 
 import mediapipe as mp
 from mpx import multi_pose
-from utils import get_video_input
+from utils import get_video_input, draw_pose_rect
 
 
 def detect_and_annotate(pose, mp_drawing, connections, image, flip=False):
@@ -27,9 +27,14 @@ def detect_and_annotate(pose, mp_drawing, connections, image, flip=False):
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+    # annotate landmarks
     if results.multi_pose_landmarks:
         for landmarks in results.multi_pose_landmarks:
             mp_drawing.draw_landmarks(image, landmarks, connections)
+
+    if results.pose_rects:
+        for rect in results.pose_rects:
+            draw_pose_rect(image, rect)
 
     return image
 
