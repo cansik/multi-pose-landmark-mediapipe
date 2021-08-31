@@ -64,6 +64,9 @@ bazel build -c opt --copt -DMESA_EGL_NO_X11_HEADERS --copt -DEGL_NO_X11 mediapip
 
 ### Problems and Challenges
 
+#### MediaPipe Solution
+The [solution_base](https://github.com/cansik/multi-pose-mediapipe/blob/main/mpx/solution_base.py#L393-L401) file has been copied into `mpx/solution_base.py` to adapt the path, where the resources are loaded and set the `_input_stream_type_info` manually due to a not registered type error which could not be resolved for now.
+
 #### Landmark Smoothing
 At the moment the landmark filter is not implemented into the graph.
 
