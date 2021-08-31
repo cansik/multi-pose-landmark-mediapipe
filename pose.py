@@ -62,13 +62,18 @@ def main():
         # To improve performance, optionally mark the image as not writeable to
         # pass by reference.
         image.flags.writeable = False
-        results = pose.process(image)
+        try:
+            results = pose.process(image)
+        except RuntimeError as ex:
+            print(f"Error: ${ex}")
+            exit(1)
 
         # Draw the pose annotation on the image.
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         if results.multi_pose_landmarks:
+            print(len(results.multi_pose_landmarks))
             for landmarks in results.multi_pose_landmarks:
                 mp_drawing.draw_landmarks(image, landmarks, connections)
 
