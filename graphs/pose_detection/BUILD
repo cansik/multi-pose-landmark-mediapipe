@@ -17,6 +17,8 @@ load(
     "mediapipe_simple_subgraph",
 )
 
+load("//mediapipe/framework/port:build_config.bzl", "mediapipe_proto_library")
+
 licenses(["notice"])
 
 package(default_visibility = ["//visibility:public"])
@@ -35,6 +37,15 @@ mediapipe_simple_subgraph(
     ],
 )
 
+mediapipe_proto_library(
+    name = "detections_to_rects_calculator_proto",
+    srcs = [],
+    deps = [
+        "//mediapipe/framework:calculator_options_proto",
+        "//mediapipe/calculators/util:detections_to_rects_calculator"
+    ],
+)
+
 mediapipe_simple_subgraph(
     name = "pose_detection_with_roi_cpu",
     graph = "pose_detection_with_roi_cpu.pbtxt",
@@ -49,6 +60,7 @@ mediapipe_simple_subgraph(
         "//mediapipe/calculators/core:begin_loop_calculator",
         "//mediapipe/calculators/core:end_loop_calculator",
         "//mediapipe/calculators/image:image_properties_calculator",
+        "//mediapipe/calculators/util:detections_to_rects_calculator",
         "//mediapipe/modules/pose_landmark:pose_detection_to_roi",
     ],
 )

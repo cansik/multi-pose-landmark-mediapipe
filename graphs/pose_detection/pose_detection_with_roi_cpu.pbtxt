@@ -7,12 +7,12 @@
 #
 # EXAMPLE:
 #   node {
-#     calculator: "PoseDetectionWithROICpu"
+#     calculator: "PoseDetectionCpu"
 #     input_stream: "IMAGE:image"
 #     output_stream: "DETECTIONS:pose_detections"
 #   }
 
-type: "PoseDetectionWithROICpu"
+type: "PoseDetectionCpu"
 
 # CPU image. (ImageFrame)
 input_stream: "IMAGE:image"
@@ -165,9 +165,23 @@ node {
 }
 
 node {
-  calculator: "BeginLoopNormalizedRectCalculator"
-  input_stream: "ITERABLE:detections"
-  input_stream: "CLONE:0:image_size"
+  calculator: "DetectionsToRectsCalculator"
+  input_stream: "DETECTIONS:detections"
+  input_stream: "IMAGE_SIZE:image_size"
+  output_stream: "NORM_RECT:rects"
+  options: {
+    [mediapipe.DetectionsToRectCalculatorOptions.ext] {
+      rotation_vector_start_keypoint_index: 0
+      rotation_vector_end_keypoint_index: 2
+      rotation_vector_target_angle_degrees: 90
+      output_zero_rect_for_empty_detections: true
+    }
+  }
+}
+
+node {
+  calculator: "BeginLoopDetectionCalculator"
+  input_stream: "ITERABLE:rects"
   output_stream: "ITEM:single_pose_rect"
   output_stream: "BATCH_END:pose_rects_timestamp"
 }
@@ -181,7 +195,7 @@ node {
 }
 
 node {
-  calculator: "EndLoopNormalizedRectCalculator"
+  calculator: "EndLoopDetectionCalculator"
   input_stream: "ITEM:pose_rect_detection"
   input_stream: "BATCH_END:pose_rects_timestamp"
   output_stream: "ITERABLE:rois"
