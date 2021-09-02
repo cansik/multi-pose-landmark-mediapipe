@@ -84,8 +84,8 @@ class MultiPose(SolutionBase):
                 'AssociationNormRectCalculator.min_similarity_threshold':
                     float(min_similarity_threshold),
                 # do not scale it up to high
-                'poselandmarkstoroi__RectTransformationCalculator.scale_x': 1.1,
-                'poselandmarkstoroi__RectTransformationCalculator.scale_y': 1.1,
+                # 'poselandmarkstoroi__RectTransformationCalculator.scale_x': 1.1,
+                # 'poselandmarkstoroi__RectTransformationCalculator.scale_y': 1.1,
                 # 'poselandmarkstoroi__RectTransformationCalculator.shift_y': 8,
                 # 'poselandmarkstoroi__RectTransformationCalculator.square_long': bool(False)
             })
