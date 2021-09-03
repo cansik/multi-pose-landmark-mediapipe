@@ -35,6 +35,9 @@ To build the graphs, download the [mediapipe](https://github.com/google/mediapip
 
 ### Problems and Challenges
 
+### Pose ROI
+The roi, which is detected either by the pose detection or the landmark to pose roi node, is quite large for a person. The overlap of different pose rois leads to a difficult tracking. This is because the node was made for single pose detection. It is possible to increase the `min-similarity-threshold` parameter to let multiple overlapping pose not be count as one. If another pose detection would be applied, which is way more close to the landmarks detected, this could already solve the problem.
+
 #### MediaPipe Solution
 The [solution_base](https://github.com/cansik/multi-pose-mediapipe/blob/main/mpx/solution_base.py#L393-L401) file has been copied into `mpx/solution_base.py` to adapt the path, where the resources are loaded and set the `_input_stream_type_info` manually due to a not registered type error which could not be resolved for now.
 
